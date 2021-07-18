@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(userRouter);
 app.use(restaurantRouter);
 app.use(tableRouter);
+console.log(process.env);
 
 const PORT = process.env.PORT || 5000;
 

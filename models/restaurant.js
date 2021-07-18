@@ -16,6 +16,18 @@ const restaurantSchema = new mongoose.Schema({
   }
 });
 
+
+restaurantSchema.statics.findByOwner = async (manager) => {
+  const restaurant = await Restaurant.findOne({ manager });
+
+  if (!restaurant) {
+    return null;
+  }
+
+  return restaurant;
+};
+
+
 const Restaurant = mongoose.model("Restaurant", restaurantSchema);
 
 module.exports = Restaurant;

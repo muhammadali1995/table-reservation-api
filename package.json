@@ -2,6 +2,7 @@
   "name": "table-reservation-api",
   "version": "0.0.0",
   "private": true,
+
   "scripts": {
     "start": "node ./bin/www"
   },
@@ -17,5 +18,8 @@
     "mongoose": "^5.12.7",
     "morgan": "~1.9.1",
     "validator": "^13.6.0"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }

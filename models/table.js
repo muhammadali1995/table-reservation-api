@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const tableSchema = new mongoose.Schema({
     referenceNumber: {
-        type: number,
+        type: Number,
         required: true,
     },
     seats: {
-        type: number,
+        type: Number,
         required: true,
     },
     restaurant: {

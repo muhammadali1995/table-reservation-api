@@ -4,7 +4,7 @@ const Restaurant = require("../models/restaurant");
 const auth = require("../middleware/auth");
 
 router.post("/restaurants", [auth], async (req, res) => {
-    const restaurant = new Restaurant(req.body);
+    const restaurant = new Restaurant({ manager: req.user.id, ...req.body });
     restaurant
         .save()
         .then(() => {
@@ -14,6 +14,14 @@ router.post("/restaurants", [auth], async (req, res) => {
             res.status(400).send(e);
         });
 });
+
+router.get('/restaurants/mine', [auth], async (req, res) => {
+    const restaurant = await Restaurant.findByOwner(req.user);
+    if (restaurant && restaurant._id) {
+        res.send(restaurant);
+    }
+    else { res.send(null); }
+})
 
 router.get("/restaurants/:id", async (req, res) => {
     const {

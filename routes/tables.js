@@ -2,9 +2,16 @@ const express = require("express");
 const router = new express.Router();
 const Table = require("../models/table");
 const auth = require("../middleware/auth");
+const Restaurant = require("../models/restaurant");
 
 router.post("/tables", [auth], async (req, res) => {
   const table = new Table(req.body);
+  const myRestaurant = await Restaurant.findByOwner(req.user);
+
+  if (!myRestaurant) return res.status(500).send('Please create restaurant first');
+
+  table.restaurant = myRestaurant;
+
   table
     .save()
     .then(() => {

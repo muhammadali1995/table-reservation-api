@@ -6,6 +6,7 @@ const cors = require("cors");
 const userRouter = require("./routes/users");
 const restaurantRouter = require("./routes/restaurants");
 const tableRouter = require('./routes/tables');
+const reservationRouter = require('./routes/reservations');
 // Routers //
 
 require("./db/mongoose");
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(userRouter);
 app.use(restaurantRouter);
 app.use(tableRouter);
+app.use(reservationRouter);
 
 const PORT = process.env.PORT || 5000;
 

@@ -34,7 +34,7 @@ router.get("/tables", [auth], async (req, res) => {
   }
 });
 
-router.get("/tables/:id", async (req, res) => {
+router.get("/tables/:id", [auth], async (req, res) => {
   const {
     id
   } = req.params;
@@ -46,10 +46,42 @@ router.get("/tables/:id", async (req, res) => {
   }
 });
 
-router.put('/tables/:id', async (req, res) => {
+
+router.put('/tables/swap', [auth], async (req, res) => {
+  const { sourceTableRN, tagetTableRN } = req.body;
+  const resp = [];
+    
+  try {
+    const myRestaurant = await Restaurant.findByOwner(req.user);
+    if (!myRestaurant) return res.status(500).send('Please create restaurant first');
+
+    const sourceTable = await Table.findOne({ restaurant: myRestaurant, referenceNumber: sourceTableRN });
+    if (!sourceTable) {
+      throw new Error('Table does not exist with the given reference number');
+    }
+
+    sourceTable.referenceNumber = tagetTableRN;
+
+    const targetTable = await Table.findOne({ restaurant: myRestaurant, referenceNumber: tagetTableRN });
+    if (targetTable) {
+      targetTable.referenceNumber = sourceTableRN;
+      await targetTable.save();
+      resp.push(targetTable);
+    }
+    
+    await sourceTable.save();
+    resp.push(sourceTable);
+    
+    res.send(resp);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e);
+  }
+})
+
+router.put('/tables/:id', [auth], async (req, res) => {
   const id = req.params.id;
   let payload = req.body;
-
   try {
     var table = await Table.findById(id);
   } catch (error) {
@@ -67,7 +99,7 @@ router.put('/tables/:id', async (req, res) => {
 })
 
 
-router.delete('/tables/:id', async (req, res) => {
+router.delete('/tables/:id', [auth], async (req, res) => {
   const id = req.params.id;
   try {
     let resp = await Table.findByIdAndRemove(id);
@@ -76,5 +108,6 @@ router.delete('/tables/:id', async (req, res) => {
     res.status(500).send(error);
   }
 })
+
 
 module.exports = router;

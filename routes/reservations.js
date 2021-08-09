@@ -1,6 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 const Restaurant = require("../models/restaurant");
+const Table = require('../models/table');
 const Reservation = require("../models/reservation");
 const auth = require("../middleware/auth");
 
@@ -33,6 +34,7 @@ router.post('/reservations', [auth], async (req, res, next) => {
 });
 
 router.get('/reservations/by-table', [auth], async (req, res) => {
+    console.log('by table');
     const { table, time } = req.query;
     const filters = { table: table }
     const now = Date.now();
@@ -50,6 +52,21 @@ router.get('/reservations/by-table', [auth], async (req, res) => {
         res.send(e);
     }
 });
+
+router.get('/reservations/by-restaurant', [auth], async (req, res) => {
+    const user = req.user;
+    try {
+        //find owners restaurant
+        var restaurant = await Restaurant.findByOwner(user);
+        var tables = await Table.find({ restaurant: restaurant });
+        //find reservations for the restaurant;
+        var reservations = await Reservation.find({ table: {$in: tables} }).populate('table', 'referenceNumber');
+        reservations = groupBy(reservations, 'table');
+        res.send(reservations);
+    } catch (e) {
+        res.send(e);
+    }
+})
 
 router.delete('/reservations/:id', async (req, res) => {
     const { id } = req.params;
@@ -72,5 +89,12 @@ router.put('/reservations/:id', async (req, res) => {
         res.send(e);
     }
 })
+
+var groupBy = function (xs, key) {
+    return xs.reduce(function (rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+    }, {});
+};
 
 module.exports = router;

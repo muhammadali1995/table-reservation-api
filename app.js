@@ -20,11 +20,11 @@ app.use(restaurantRouter);
 app.use(tableRouter);
 app.use(reservationRouter);
 
-// const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
-// app.listen(PORT, function () {
-//   console.log("Server is running on Port: " + PORT);
-// });
+app.listen(PORT, function () {
+  console.log("Server is running on Port: " + PORT);
+});
 
 app.get("/", (req, res) => {
   res.send("Api is running");

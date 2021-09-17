@@ -7,6 +7,9 @@ const userRouter = require("./routes/users");
 const restaurantRouter = require("./routes/restaurants");
 const tableRouter = require('./routes/tables');
 const reservationRouter = require('./routes/reservations');
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('./swagger_output.json')
+
 // Routers //
 
 require("./db/mongoose");
@@ -25,6 +28,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, function () {
   console.log("Server is running on Port: " + PORT);
 });
+
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 app.get("/", (req, res) => {
   res.send("Api is running");

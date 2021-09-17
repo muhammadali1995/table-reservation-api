@@ -5,17 +5,22 @@ const User = require("../models/user");
 const auth = require("../middleware/auth");
 
 router.post("/users", async (req, res) => {
-  const user = new User(req.body);
-  user
-    .save()
-    .then(() => {
-      user.generateToken().then((token) => {
-        res.status(201).send({ user, token });
-      });
-    })
-    .catch((e) => {
-      res.status(400).send(e);
-    });
+    /*  #swagger.parameters['user'] = {
+           in: 'body',
+           type: 'object',
+           description: 'Book data'
+   } */
+    const user = new User(req.body);
+    user
+        .save()
+        .then(() => {
+            user.generateToken().then((token) => {
+                res.status(201).send({user, token});
+            });
+        })
+        .catch((e) => {
+            res.status(400).send(e);
+        });
 });
 
 router.post("/users/login", async (req, res) => {
@@ -45,14 +50,16 @@ router.post("/users/logout", auth, async (req, res) => {
 });
 
 router.get("/users/:id", (req, res) => {
-  const _id = req.params.id;
-  User.findById(_id)
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((error) => {
-      res.status(404).send(error);
-    });
+    //  #swagger.parameters['id'] = { description: 'User ID' }
+
+    const _id = req.params.id;
+    User.findById(_id)
+        .then((user) => {
+            res.send(user);
+        })
+        .catch((error) => {
+            res.status(404).send(error);
+        });
 });
 
 module.exports = router;
